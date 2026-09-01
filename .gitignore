@@ -1,0 +1,37 @@
+# IDE and OS metadata
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Python caches and environments
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.venv/
+venv/
+
+# Runtime logs and experiment outputs
+*.log
+tb_logger/
+wandb/
+results/
+experiments/**/models/
+experiments/**/training_states/
+experiments/**/visualization/
+
+# Model weights and large generated artifacts
+*.pth
+*.pt
+*.ckpt
+*.onnx
+*.npy
+*.mat
+
+# Local dataset payloads (keep documentation and tiny examples tracked)
+datasets/*
+!datasets/README.md
+!datasets/example/
+!datasets/example/**

@@ -1,0 +1,107 @@
+# Stage 0 RGB-only MambaIRv2 baseline, trained from scratch on DIV2K, x4.
+name: v1.0_RGB_MambaIRv2_x4
+model_type: MambaIRv2Model
+scale: 4
+num_gpu: 1
+manual_seed: 10
+
+datasets:
+  train:
+    task: SR
+    name: DIV2K-Train
+    type: PairedImageDataset
+    dataroot_gt:
+      - /home/BRAIN/xukai/datasets/M3SR/DIV2K/DIV2K_train_HR/DIV2K_train_HR
+    dataroot_lq:
+      - /home/BRAIN/xukai/datasets/M3SR/DIV2K/DIV2K_train_LR_bicubic_X4/DIV2K_train_LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+    gt_size: 192
+    use_hflip: true
+    use_rot: true
+    use_shuffle: true
+    num_worker_per_gpu: 8
+    batch_size_per_gpu: 2
+    dataset_enlarge_ratio: 100
+    prefetch_mode: ~
+
+  val:
+    task: SR
+    name: DIV2K-Valid
+    type: PairedImageDataset
+    dataroot_gt:
+      - /home/BRAIN/xukai/datasets/M3SR/DIV2K/DIV2K_valid_HR/DIV2K_valid_HR
+    dataroot_lq:
+      - /home/BRAIN/xukai/datasets/M3SR/DIV2K/DIV2K_valid_LR_bicubic_X4/DIV2K_valid_LR_bicubic/X4
+    filename_tmpl: '{}x4'
+    io_backend:
+      type: disk
+
+network_g:
+  type: MambaIRv2
+  upscale: 4
+  in_chans: 3
+  img_size: 64
+  img_range: 1.0
+  embed_dim: 174
+  d_state: 16
+  depths: [6, 6, 6, 6, 6, 6]
+  num_heads: [6, 6, 6, 6, 6, 6]
+  window_size: 16
+  inner_rank: 64
+  num_tokens: 128
+  convffn_kernel_size: 5
+  mlp_ratio: 2.0
+  upsampler: pixelshuffle
+  resi_connection: 1conv
+
+path:
+  pretrain_network_g: ~
+  strict_load_g: false
+  resume_state: ~
+
+train:
+  optim_g:
+    type: Adam
+    lr: 2.0e-4
+    weight_decay: 0
+    betas: [0.9, 0.99]
+  scheduler:
+    type: MultiStepLR
+    milestones: [250000, 400000, 450000, 475000]
+    # milestones: [5000, 10000, 15000, 20000, 25000, 30000, 35000, 50000, 70000, 95000]
+    gamma: 0.5
+  total_iter: 500000
+#  total_iter: 100000
+  warmup_iter: -1
+  pixel_opt:
+    type: L1Loss
+    loss_weight: 1.0
+    reduction: mean
+
+val:
+  val_freq: 5000.0
+  save_img: false
+  metrics:
+    psnr:
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+
+logger:
+  print_freq: 500
+  save_checkpoint_freq: 5000.0
+  use_tb_logger: true
+  wandb:
+    project: ~
+    resume_id: ~
+
+dist_params:
+  backend: nccl
+  port: 30504
+
