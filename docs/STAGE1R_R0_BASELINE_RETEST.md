@@ -2,7 +2,7 @@
 
 This is the first and only experiment implemented in this iteration. It does
 not change MambaIRv2, the dataset pipeline, or any metric. It re-evaluates the
-existing v1.0 500k checkpoint in the Stage1R environment.
+existing best v1.0 490k checkpoint in the Stage1R environment.
 
 ## Added files
 
@@ -40,7 +40,7 @@ Enter the v1.0 project and confirm the checkpoint exists:
 ```bash
 cd /home/BRAIN/xukai/code/v1.0-M3SR-MambaIRv2
 
-test -f experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_500000.pth \
+test -f experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_490000.pth \
   && echo "checkpoint found" \
   || echo "checkpoint missing"
 ```
@@ -72,7 +72,7 @@ audit record:
 ```bash
 python scripts/stage1r/verify_r0_baseline.py \
   results/test_S1R_R0_RGBBaseline_x4 \
-  --checkpoint experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_500000.pth \
+  --checkpoint experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_490000.pth \
   --json-out results/test_S1R_R0_RGBBaseline_x4/r0_a_audit.json
 ```
 

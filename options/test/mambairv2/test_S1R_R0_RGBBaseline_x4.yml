@@ -86,8 +86,8 @@ network_g:
   resi_connection: 1conv
 
 path:
-  # Stage1R R0-A: user-confirmed absolute v1.0 500k checkpoint path.
-  pretrain_network_g: /home/BRAIN/xukai/code/v1.0-M3SR-MambaIRv2/experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_500000.pth
+  # Stage1R R0-A correction: the reported best v1.0 result uses 490k.
+  pretrain_network_g: /home/BRAIN/xukai/code/v1.0-M3SR-MambaIRv2/experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_490000.pth
   param_key_g: params
   strict_load_g: true
 

@@ -20,7 +20,7 @@ REFERENCE = {
 
 DEFAULT_CHECKPOINT = Path(
     '/home/BRAIN/xukai/code/v1.0-M3SR-MambaIRv2/'
-    'experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_500000.pth')
+    'experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_490000.pth')
 
 METRIC_PATTERN = re.compile(
     r'Validation\s+(Set5|Set14|B100|Urban100|Manga109)\s*\r?\n'

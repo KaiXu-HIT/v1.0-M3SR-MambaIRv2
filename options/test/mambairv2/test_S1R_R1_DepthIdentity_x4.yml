@@ -1,0 +1,115 @@
+# Stage1R R1-A: gate-zero Depth Identity Adapter, evaluation only.
+name: test_S1R_R1_DepthIdentity_x4
+model_type: RGBDepthResidualMambaIRv2Model
+scale: 4
+num_gpu: 1
+manual_seed: 10
+
+datasets:
+  test_1:
+    task: SR
+    name: Set5
+    type: RGBDepthPairedImageDataset
+    dataroot_gt: [/home/BRAIN/xukai/datasets/M3SR/Set5/raw/Set5/Set5/original]
+    dataroot_lq: [/home/BRAIN/xukai/datasets/M3SR/Set5/raw/Set5/Set5/LRbicx4]
+    dataroot_depth: [/home/BRAIN/xukai/datasets/M3SR/Set5-Depth/X4]
+    filename_tmpl: '{}'
+    filename_tmpl_depth: '{}'
+    depth_percentile_low: 0.02
+    depth_percentile_high: 0.98
+    depth_normalize_eps: 1.0e-6
+    io_backend: {type: disk}
+  test_2:
+    task: SR
+    name: Set14
+    type: RGBDepthPairedImageDataset
+    dataroot_gt: [/home/BRAIN/xukai/datasets/M3SR/Set14/HR]
+    dataroot_lq: [/home/BRAIN/xukai/datasets/M3SR/Set14/LR_bicubic/X4]
+    dataroot_depth: [/home/BRAIN/xukai/datasets/M3SR/Set14-Depth/X4]
+    filename_tmpl: '{}x4'
+    filename_tmpl_depth: '{}x4'
+    depth_percentile_low: 0.02
+    depth_percentile_high: 0.98
+    depth_normalize_eps: 1.0e-6
+    io_backend: {type: disk}
+  test_3:
+    task: SR
+    name: B100
+    type: RGBDepthPairedImageDataset
+    dataroot_gt: [/home/BRAIN/xukai/datasets/M3SR/B100/HR]
+    dataroot_lq: [/home/BRAIN/xukai/datasets/M3SR/B100/LR_bicubic/X4]
+    dataroot_depth: [/home/BRAIN/xukai/datasets/M3SR/B100-Depth/X4]
+    filename_tmpl: '{}x4'
+    filename_tmpl_depth: '{}x4'
+    depth_percentile_low: 0.02
+    depth_percentile_high: 0.98
+    depth_normalize_eps: 1.0e-6
+    io_backend: {type: disk}
+  test_4:
+    task: SR
+    name: Urban100
+    type: RGBDepthPairedImageDataset
+    dataroot_gt: [/home/BRAIN/xukai/datasets/M3SR/Urban100/HR]
+    dataroot_lq: [/home/BRAIN/xukai/datasets/M3SR/Urban100/LR_bicubic/X4]
+    dataroot_depth: [/home/BRAIN/xukai/datasets/M3SR/Urban100-Depth/X4]
+    filename_tmpl: '{}x4'
+    filename_tmpl_depth: '{}x4'
+    depth_percentile_low: 0.02
+    depth_percentile_high: 0.98
+    depth_normalize_eps: 1.0e-6
+    io_backend: {type: disk}
+  test_5:
+    task: SR
+    name: Manga109
+    type: RGBDepthPairedImageDataset
+    dataroot_gt: [/home/BRAIN/xukai/datasets/M3SR/Manga109/HR]
+    dataroot_lq: [/home/BRAIN/xukai/datasets/M3SR/Manga109/LR_bicubic/X4]
+    dataroot_depth: [/home/BRAIN/xukai/datasets/M3SR/Manga109-Depth/X4]
+    filename_tmpl: '{}_LRBI_x4'
+    filename_tmpl_depth: '{}_LRBI_x4'
+    depth_percentile_low: 0.02
+    depth_percentile_high: 0.98
+    depth_normalize_eps: 1.0e-6
+    io_backend: {type: disk}
+
+network_g:
+  type: RGBDepthResidualMambaIRv2
+  upscale: 4
+  in_chans: 3
+  depth_in_chans: 1
+  img_size: 64
+  img_range: 1.0
+  embed_dim: 174
+  d_state: 16
+  depths: [6, 6, 6, 6, 6, 6]
+  num_heads: [6, 6, 6, 6, 6, 6]
+  window_size: 16
+  inner_rank: 64
+  num_tokens: 128
+  convffn_kernel_size: 5
+  mlp_ratio: 2.0
+  upsampler: pixelshuffle
+  resi_connection: 1conv
+
+path:
+  # Stage1R R1-A: warm-start the exact best baseline; only adapter keys may miss.
+  pretrain_network_g: /home/BRAIN/xukai/code/v1.0-M3SR-MambaIRv2/experiments/v1.0_RGB_MambaIRv2_x4/models/net_g_490000.pth
+  param_key_g: params
+  strict_load_g: false
+
+val:
+  save_img: false
+  suffix: ~
+  metrics:
+    psnr:
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
+
+dist_params:
+  backend: nccl
+  port: 31004
